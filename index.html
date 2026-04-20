@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorand QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        p {
+            color: #a0a0c0;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            color: #000;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.4);
+        }
+        
+        .qr-container {
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 16px;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        #qrcode {
+            display: none;
+        }
+        
+        .algorand-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        
+        .algorand-logo img {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .info {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #888;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Algorand QR Generator</h1>
+        <p>Enter any text or Algorand address to generate a QR code</p>
+        
+        <div class="input-group">
+            <input type="text" id="textInput" placeholder="Enter text or Algorand address..." value="https://algorand.com">
+        </div>
+        
+        <button onclick="generateQR()">Generate QR Code</button>
+        
+        <div class="qr-container" id="qrWrapper">
+            <div id="qrcode"></div>
+            <div class="algorand-logo">
+                <img src="./algologo.png"
+                     alt="Algorand Logo" 
+                     onerror="this.src='https://via.placeholder.com/60?text=ALGO'">
+            </div>
+        </div>
+        
+        <div class="info">
+        </div>
+        
+        <div class="footer">
+        </div>
+    </div>
+
+    <script>
+        let qrcodeInstance = null;
+
+        function generateQR() {
+            const text = document.getElementById('textInput').value.trim();
+            
+            if (!text) {
+                alert("Please enter some text or an Algorand address");
+                return;
+            }
+            
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            qrContainer.style.display = 'block';
+            
+            // Create new QR code
+            qrcodeInstance = new QRCode(qrContainer, {
+                text: text,
+                width: 300,
+                height: 300,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H  // High error correction to handle logo overlay
+            });
+            
+            // Small delay to ensure QR is rendered before logo positioning
+            setTimeout(() => {
+                const wrapper = document.getElementById('qrWrapper');
+                wrapper.style.display = 'inline-block';
+            }, 100);
+        }
+        
+        // Generate initial QR code on page load
+        window.onload = function() {
+            generateQR();
+        };
+        
+        // Allow pressing Enter key
+        document.getElementById('textInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateQR();
+            }
+        });
+    </script>
+</body>
+</html>
